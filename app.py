@@ -1,5 +1,5 @@
 from flask import Flask, redirect
-import os
+import os, shutil
 
 app = Flask(__name__)
 
@@ -13,13 +13,12 @@ def mostrar_home():
     lista_archivos = mostrar_contenido_carpeta('~')
     return str(lista_archivos)
     
+    
 
 #Muestra el contenido de la carpeta
 def mostrar_contenido_carpeta(carpeta):
     home = os.path.expanduser(carpeta)
     lista_directorios = os.listdir(home)
-    #string_directrios = str(lista_directorios)
-    #return string_directrios
     return lista_directorios
     
 #Crea una nueva carpeta
@@ -48,7 +47,7 @@ def crear_archivo(nombre,direccion_padre):
             mensaje =  "Archivo {} creado correctamente.".format(nombre)
     return mensaje
 
-#Renombrar un archivo
+#Renombrar
 def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
     mensaje = ""
     direccion = os.path.join(direccion_padre, nombre_nuevo)
@@ -60,7 +59,22 @@ def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
             mensaje = "Archivo renombrado exitosamente"
     return mensaje
     
-
+#Mover una carpeta
+def mover_carpeta(ruta_origen, ruta_destino, nombre):
+    mensaje = ""
+    origen = os.path.join(ruta_origen,nombre)
+    destino = os.path.join(ruta_destino, nombre)
+    if os.path.exists(destino):
+        mensaje="no puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
+    else:
+        shutil.copytree(origen, destino)
+        if os.path.exists(destino):
+            mensaje = "La carpeta se movió exitosamente"
+    return mensaje
+    ####
+    #Falta borrar la carpeta
+    ####
+    
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000, debug=True)
