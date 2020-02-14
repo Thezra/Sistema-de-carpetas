@@ -3,12 +3,6 @@ import os
 
 app = Flask(__name__)
 
-
-
-
-
-
-
 @app.route('/')
 def inicio():
     return redirect('/Home')
@@ -40,6 +34,32 @@ def crear_carpeta(nombre, direccion_padre):
         if os.path.exists(direccion):
             mensaje =  "Carpeta {} creada correctamente.".format(nombre)
     return mensaje
+
+#Crea un nuevo archivo
+def crear_archivo(nombre,direccion_padre):
+    direccion = os.path.join(direccion_padre, nombre)
+    permisos = 0o740
+    mensaje = ""
+    if os.path.exists(direccion):
+        mensaje = "El archivo no puede crearse, ya existe."
+    else:
+        os.open(nombre, permisos)
+        if os.path.exists(direccion):
+            mensaje =  "Archivo {} creado correctamente.".format(nombre)
+    return mensaje
+
+#Renombrar un archivo
+def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
+    mensaje = ""
+    direccion = os.path.join(direccion_padre, nombre_nuevo)
+    if os.path.exists(direccion):
+        mensaje = "Ya hay otro archivo en la carpeta con ese nombre."
+    else:
+        os.rename(nombre_viejo, nombre_nuevo)
+        if os.path.exists(direccion):
+            mensaje = "Archivo renombrado exitosamente"
+    return mensaje
+    
 
 
 if __name__ == "__main__":
