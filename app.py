@@ -1,5 +1,6 @@
 from flask import Flask, redirect
 import os
+from shutil import rmtree
 
 app = Flask(__name__)
 
@@ -12,7 +13,6 @@ def inicio():
 def mostrar_home():
     lista_archivos = mostrar_contenido_carpeta('~')
     return str(lista_archivos)
-    
 
 #Muestra el contenido de la carpeta
 def mostrar_contenido_carpeta(carpeta):
@@ -48,7 +48,7 @@ def crear_archivo(nombre,direccion_padre):
             mensaje =  "Archivo {} creado correctamente.".format(nombre)
     return mensaje
 
-#Renombrar un archivo
+#Renombrar un archivo y carpeta
 def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
     mensaje = ""
     direccion = os.path.join(direccion_padre, nombre_nuevo)
@@ -60,7 +60,16 @@ def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
             mensaje = "Archivo renombrado exitosamente"
     return mensaje
     
+#Eliminar archivo
+def eliminarArchivo(nombre_archivo):
+    os.remove(nombre_archivo)
+    return "El archivo ha sido eliminado"
 
+#Eliminar carpeta y TODO el contenido
+def eliminarCarpeta(nombre_carpeta):
+    rmtree(nombre_carpeta)
+    return "La carpeta y todo su contenido han sido eliminados"
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000, debug=True)
+
