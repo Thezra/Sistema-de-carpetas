@@ -1,6 +1,5 @@
 from flask import Flask, redirect
-import os
-from shutil import rmtree
+import os, shutil, stat
 
 app = Flask(__name__)
 
@@ -18,11 +17,10 @@ def mostrar_home():
 def mostrar_contenido_carpeta(carpeta):
     home = os.path.expanduser(carpeta)
     lista_directorios = os.listdir(home)
-    #string_directrios = str(lista_directorios)
-    #return string_directrios
     return lista_directorios
+
     
-#Crea una nueva carpeta
+#Crear una nueva carpeta
 def crear_carpeta(nombre, direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
     permisos = 0o770
@@ -35,7 +33,7 @@ def crear_carpeta(nombre, direccion_padre):
             mensaje =  "Carpeta {} creada correctamente.".format(nombre)
     return mensaje
 
-#Crea un nuevo archivo
+#Crear un nuevo archivo
 def crear_archivo(nombre,direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
     permisos = 0o740
@@ -60,15 +58,69 @@ def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
             mensaje = "Archivo renombrado exitosamente"
     return mensaje
     
+#Mover una carpeta
+def mover_carpeta(ruta_origen, ruta_destino, nombre):
+    mensaje = ""
+    origen = os.path.join(ruta_origen,nombre)
+    destino = os.path.join(ruta_destino, nombre)
+    if os.path.exists(destino):
+        mensaje="no puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
+    else:
+        shutil.copytree(origen, destino)
+        if os.path.exists(destino):
+            mensaje = "La carpeta se movió exitosamente"
+    return mensaje
+    ####
+    #Falta borrar la carpeta del origen
+    ####
 #Eliminar archivo
 def eliminarArchivo(nombre_archivo):
     os.remove(nombre_archivo)
     return "El archivo ha sido eliminado"
 
+#Copiar una carpeta
+def copiar_carpeta(ruta_origen, ruta_destino, nombre):
+    mensaje = ""
+    origen = os.path.join(ruta_origen,nombre)
+    destino = os.path.join(ruta_destino, nombre)
+    if os.path.exists(destino):
+        mensaje="no puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
+    else:
+        shutil.copytree(origen, destino)
+        if os.path.exists(destino):
+            mensaje = "La carpeta se movió exitosamente"
+    return mensaje
 #Eliminar carpeta y TODO el contenido
 def eliminarCarpeta(nombre_carpeta):
     rmtree(nombre_carpeta)
     return "La carpeta y todo su contenido han sido eliminados"
+
+#Copiar un archivo 
+def copiar_archivo(ruta_origen, ruta_destino, nombre):
+    origen = os.path.join(ruta_origen,nombre)
+    destino = os.path.join(ruta_destino, nombre)
+    if os.path.exists(destino):
+        nombre = "copia de "+nombre
+        destino = os.path.join(ruta_destino, nombre)
+        shutil.copy(origen, destino)
+        shutil.copymode(origen, destino)
+    else:
+        shutil.copy(origen, destino)
+        shutil.copymode(origen, destino)
+    return "Archivo copiado"
+
+#Cambiar los permisos
+#El num_permisos debe venir con el 0o
+def cambiar_permisos(ruta_padre, nombre, num_permisos):
+    ruta = os.path.join(ruta_padre,nombre)
+    return os.chmod(ruta, num_permisos)
+    
+
+#Cambiar el dueño:
+
+
+
+
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000, debug=True)
