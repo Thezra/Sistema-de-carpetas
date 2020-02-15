@@ -64,19 +64,13 @@ def mover_carpeta(ruta_origen, ruta_destino, nombre):
     origen = os.path.join(ruta_origen,nombre)
     destino = os.path.join(ruta_destino, nombre)
     if os.path.exists(destino):
-        mensaje="no puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
+        mensaje="No puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
     else:
         shutil.copytree(origen, destino)
         if os.path.exists(destino):
             mensaje = "La carpeta se movió exitosamente"
     return mensaje
-    ####
-    #Falta borrar la carpeta del origen
-    ####
-#Eliminar archivo
-def eliminarArchivo(nombre_archivo):
-    os.remove(nombre_archivo)
-    return "El archivo ha sido eliminado"
+    eliminarCarpeta(nombre)
 
 #Copiar una carpeta
 def copiar_carpeta(ruta_origen, ruta_destino, nombre):
@@ -84,16 +78,12 @@ def copiar_carpeta(ruta_origen, ruta_destino, nombre):
     origen = os.path.join(ruta_origen,nombre)
     destino = os.path.join(ruta_destino, nombre)
     if os.path.exists(destino):
-        mensaje="no puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
+        mensaje="No puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
     else:
         shutil.copytree(origen, destino)
         if os.path.exists(destino):
             mensaje = "La carpeta se movió exitosamente"
     return mensaje
-#Eliminar carpeta y TODO el contenido
-def eliminarCarpeta(nombre_carpeta):
-    rmtree(nombre_carpeta)
-    return "La carpeta y todo su contenido han sido eliminados"
 
 #Copiar un archivo 
 def copiar_archivo(ruta_origen, ruta_destino, nombre):
@@ -109,13 +99,24 @@ def copiar_archivo(ruta_origen, ruta_destino, nombre):
         shutil.copymode(origen, destino)
     return "Archivo copiado"
 
+#Eliminar archivo
+def eliminarArchivo(nombre):
+    os.remove(nombre)
+    return "El archivo ha sido eliminado"
+
+#Eliminar carpeta y TODO el contenido
+def eliminarCarpeta(nombre):
+    shutil.rmtree(nombre)
+    return "La carpeta y todo su contenido han sido eliminados"
+
 #Cambiar los permisos
-#El num_permisos debe venir con el 0o
 def cambiar_permisos(ruta_padre, nombre, num_permisos):
     ruta = os.path.join(ruta_padre,nombre)
-    return os.chmod(ruta, num_permisos)
+    decimal = int(str(num_permisos), 8)
+    os.chmod(ruta, decimal)
+    return "Los permisos han sido cambiados correctamente"
+    #NOTITA IMPORTANTE: Diferenciar entre permisos en recursividad o solo al archivo o carpeta actual <3
     
-
 #Cambiar el dueño:
 
 
