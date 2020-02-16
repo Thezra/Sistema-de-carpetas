@@ -13,14 +13,12 @@ def mostrar_home():
     lista_archivos = mostrar_contenido_carpeta('~')
     return str(lista_archivos)
     
-
 #Muestra el contenido de la carpeta
 def mostrar_contenido_carpeta(carpeta):
     home = os.path.expanduser(carpeta)
     lista_directorios = os.listdir(home)
     return lista_directorios
 
-    
 #Crear una nueva carpeta
 def crear_carpeta(nombre, direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
@@ -125,8 +123,6 @@ def cambiar_permisos_recursivo(nombre, num_permisos):
     mensaje = "Permisos de la carpeta actualizados exitosamente"
     return mensaje
 
-#NO PETAN, PERO TAMPOCO FUNCIONAN XD:
-
 #Cambiar el usuario dueño de solo ese archivo
 def cambiar_dueño(nuevo_dueño, nombre):
     comando = 'sudo chown '+nuevo_dueño+' '+nombre
@@ -139,9 +135,9 @@ def cambiar_dueño(nuevo_dueño, nombre):
 #Cambiar el usario dueño de una carpeta y su contenido
 def cambiar_dueño_recursivo(nuevo_dueño, nombre_carpeta):
     sudo_password = "danalejo+02"
-    comando = 'chown -R'+nuevo_dueño+' '+nombre_carpeta
+    comando = 'chown -R '+nuevo_dueño+' '+nombre_carpeta
     os.system('echo %s|sudo -S %s' % (sudo_password, comando))
-    mensaje = "Dueño actualizado correctamente"
+    mensaje = "Usuario dueño de la carpeta actualizado correctamente"
     return mensaje
     #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
 
