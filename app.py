@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template
-import os, shutil, stat
+import os, shutil, stat, subprocess
 
 app = Flask(__name__)
 
@@ -142,8 +142,30 @@ def cambiar_dueño_recursivo(nuevo_dueño, nombre_carpeta):
     return mensaje
     #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
 
-#Mostrar permisos
+#Mostrar permisos de todos los archivos de una carpeta
+def mostrar_permisos_global():
+    #comando = "ls -l"
+    #salida = os.system(comando)
+    resultado = subprocess.getoutput("ls")
+    #return str(resultado)
+    lista_nombres = resultado.split("\n")
+    string_para_return = ""
+    for i in lista_nombres:
+        permisos = mostrar_permisos_especifico(i)
+        string_para_return = string_para_return+" "+permisos+"\n"
+    return string_para_return
 
+#Mostrar permisos de un archivo en especifico
+def mostrar_permisos_especifico(nombre):
+    if str(nombre).find(" ") == -1:
+        resultado=subprocess.getoutput("ls -l "+nombre)
+    else:
+        str(nombre).replace(" ","\ ")
+        resultado=subprocess.getoutput("ls -l '"+nombre+"'")
+    #comando = "ls -l | grep "+str(nombre)
+    #salida = os.system(comando)
+    return str(resultado)
+    
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000, debug=True)
