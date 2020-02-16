@@ -141,6 +141,7 @@ def cambiar_dueño_recursivo(nuevo_dueño, nombre_carpeta):
     return mensaje
     #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
 
+#Mostrar permisos
 
 
 if __name__ == "__main__":
