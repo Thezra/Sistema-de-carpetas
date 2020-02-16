@@ -1,4 +1,4 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, render_template
 import os, shutil, stat
 
 app = Flask(__name__)
@@ -11,7 +11,8 @@ def inicio():
 @app.route('/Home')
 def mostrar_home():
     lista_archivos = mostrar_contenido_carpeta('~')
-    return str(lista_archivos)
+    #return str(lista_archivos)
+    return render_template("vistas.html", lista=lista_archivos)
     
 #Muestra el contenido de la carpeta
 def mostrar_contenido_carpeta(carpeta):
