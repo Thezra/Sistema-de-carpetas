@@ -12,6 +12,7 @@ def inicio():
 def mostrar_home():
     lista_archivos = mostrar_contenido_carpeta('~')
     return str(lista_archivos)
+    
 
 #Muestra el contenido de la carpeta
 def mostrar_contenido_carpeta(carpeta):
@@ -69,9 +70,9 @@ def mover_carpeta(ruta_origen, ruta_destino, nombre):
         shutil.copytree(origen, destino)
         if os.path.exists(destino):
             mensaje = "La carpeta se movió exitosamente"
+        eliminarCarpeta(nombre)
     return mensaje
-    eliminarCarpeta(nombre)
-
+    
 #Copiar una carpeta
 def copiar_carpeta(ruta_origen, ruta_destino, nombre):
     mensaje = ""
@@ -109,17 +110,40 @@ def eliminarCarpeta(nombre):
     shutil.rmtree(nombre)
     return "La carpeta y todo su contenido han sido eliminados"
 
-#Cambiar los permisos
+#Cambiar los permisos de un archivo o carpeta(sin afectar el contenido)
 def cambiar_permisos(ruta_padre, nombre, num_permisos):
     ruta = os.path.join(ruta_padre,nombre)
     decimal = int(str(num_permisos), 8)
     os.chmod(ruta, decimal)
     return "Los permisos han sido cambiados correctamente"
-    #NOTITA IMPORTANTE: Diferenciar entre permisos en recursividad o solo al archivo o carpeta actual <3
-    
-#Cambiar el dueño:
+    #NOTITA IMPORTANTE: Diferenciar entre permisos en recursividad o solo al archivo o carpeta actual <3 --- Listo
 
+#Cambiar los permisos de una carpeta afectando el contenido
+def cambiar_permisos_recursivo(nombre, num_permisos):
+    comando = 'chmod -R '+str(num_permisos)+' '+nombre
+    os.system(comando)
+    mensaje = "Permisos de la carpeta actualizados exitosamente"
+    return mensaje
 
+#NO PETAN, PERO TAMPOCO FUNCIONAN XD:
+
+#Cambiar el usuario dueño de solo ese archivo
+def cambiar_dueño(nuevo_dueño, nombre):
+    comando = 'sudo chown '+nuevo_dueño+' '+nombre
+    sudo_password = "danalejo+02"
+    os.system('echo %s|sudo -S %s' % (sudo_password, comando))
+    mensaje = "Usuario dueño del archivo actualizado correctamente"
+    return mensaje
+    #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
+
+#Cambiar el usario dueño de una carpeta y su contenido
+def cambiar_dueño_recursivo(nuevo_dueño, nombre_carpeta):
+    sudo_password = "danalejo+02"
+    comando = 'chown -R'+nuevo_dueño+' '+nombre_carpeta
+    os.system('echo %s|sudo -S %s' % (sudo_password, comando))
+    mensaje = "Dueño actualizado correctamente"
+    return mensaje
+    #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
 
 
 
