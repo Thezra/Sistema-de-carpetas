@@ -1,7 +1,8 @@
-from flask import Flask, redirect, render_template
-import os, shutil, stat, subprocess
+from flask import Flask, redirect, render_template, request
+import os, shutil, stat, subprocess, funciones
 
 app = Flask(__name__)
+#app.secret_key = "peo"
 
 @app.route('/')
 def inicio():
@@ -10,10 +11,10 @@ def inicio():
 #muestra la carpeta home automaticamente al inicar
 @app.route('/Home')
 def mostrar_home():
-    lista_archivos = mostrar_contenido_carpeta('~')
-    #return str(lista_archivos)
-    return render_template("vistas.html", lista=lista_archivos)
-    
+    lista_archivos = mostrar_contenido_carpeta("~")
+    return render_template("index.html", lista=lista_archivos)
+    #return crear_carpeta("peo", "~")
+
 #Muestra el contenido de la carpeta
 def mostrar_contenido_carpeta(carpeta):
     home = os.path.expanduser(carpeta)
@@ -21,20 +22,26 @@ def mostrar_contenido_carpeta(carpeta):
     return lista_directorios
 
 #Crear una nueva carpeta
-def crear_carpeta(nombre, direccion_padre):
+'''def crear_carpeta(nombre, direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
     permisos = 0o770
-    mensaje = ""
     if os.path.exists(direccion):
         mensaje = "La carpeta no puede crearse, ya existe."
     else:
         os.mkdir(direccion, permisos)
         if os.path.exists(direccion):
             mensaje =  "Carpeta {} creada correctamente.".format(nombre)
-    return mensaje
+    return mensaje'''
+
+@app.route("/crear_carpeta", methods=["POST", "GET"])
+def crear_dir():
+    if request.method == "POST":
+        nombre = request.form["Nombre_carpeta"]
+        direccion_padre = request.form["Direccion_Padre_Carpeta"]
+    return funciones.crear_carpeta(nombre, direccion_padre)
 
 #Crear un nuevo archivo
-def crear_archivo(nombre,direccion_padre):
+'''def crear_archivo(nombre,direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
     permisos = 0o740
     mensaje = ""
@@ -44,7 +51,17 @@ def crear_archivo(nombre,direccion_padre):
         os.open(nombre, permisos)
         if os.path.exists(direccion):
             mensaje =  "Archivo {} creado correctamente.".format(nombre)
-    return mensaje
+    return mensaje'''
+
+#Creación de archivo llamando a la función   
+@app.route("/crear_archivo", methods=["POST", "GET"])
+def crear_file():
+    if request.method == "POST":
+        nombre = request.form["Nombre_archivo"]
+        direccion_padre = request.form["Direccion_Padre_Archivo"]
+    return funciones.crear_archivo(nombre, direccion_padre)
+
+#------- DE AQUÍ PARA ABAJO NO HE TOCADO NARA DE NARA --------------------------------
 
 #Renombrar un archivo y carpeta
 def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
