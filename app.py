@@ -3,23 +3,99 @@ import os, shutil, stat, subprocess, funciones
 
 app = Flask(__name__)
 #app.secret_key = "peo"
+Ruta = "/home/daniel/"
+
+#Para "subir" a la pagina anterior
+@app.route('/atras')
+def quitar_a_ruta():
+    global Ruta
+    if Ruta == "/home/daniel/":
+        return mostrar_contenido_carpeta(Ruta)
+    else:
+        ruta = Ruta.split("/")
+        ruta.pop(-1)
+        ruta.pop(-1)
+        ruta_nueva =""
+        for i in ruta:
+            ruta_nueva = ruta_nueva+i+"/"
+        Ruta = ruta_nueva
+        return mostrar_contenido_carpeta(ruta_nueva)
+
+@app.route('/actualizar')
+#Para "actualizar" la ruta
+def actualizar_pagina():
+    global Ruta
+    return mostrar_contenido_carpeta(Ruta)
+
+#Para "bajar" en la ruta
+def agregar_a_ruta(nombre_carpeta):
+    global Ruta
+    Ruta = Ruta+str(nombre_carpeta)+"/"
+    return Ruta
+
+#def generar_ruta(nombre):
+#    #return os.system("realpath "+nombre)
+#    return os.path.realpath(nombre)
+#    #return str(nombre)
+
 
 @app.route('/')
 def inicio():
     return redirect('/Home')
 
+
 #muestra la carpeta home automaticamente al inicar
 @app.route('/Home')
 def mostrar_home():
-    lista_archivos = mostrar_contenido_carpeta("~")
-    return render_template("index.html", lista=lista_archivos)
-    #return crear_carpeta("peo", "~")
+    contenido = os.path.expanduser('~')
+    global Ruta
+    Ruta = "/home/daniel/"
+    lista_dir = []
+    lista_archivos = []
+    lista_directorios = os.listdir(contenido)
+    for i in lista_directorios:
+        if os.path.isdir(Ruta+i):
+            lista_dir.append(i)
+        elif os.path.isfile(Ruta+i):
+            lista_archivos.append(i)
+    return render_template("index.html", listadir=lista_dir, listaarch=lista_archivos)
+
+    #return str(lista_archivos)
 
 #Muestra el contenido de la carpeta
-def mostrar_contenido_carpeta(carpeta):
-    home = os.path.expanduser(carpeta)
-    lista_directorios = os.listdir(home)
-    return lista_directorios
+@app.route('/Mostrar_Carpeta', methods=['GET'])
+def mostrar_contenido_carpeta(back=""):
+    lista_dir = []
+    lista_archivos = []
+    if back == "":
+        carpeta = request.args.get('carpeta')
+        carpeta = str(carpeta).strip("'")
+        ruta = agregar_a_ruta(carpeta)
+    else:
+        ruta=back
+
+    lista_directorios = os.listdir(ruta)
+    for i in lista_directorios:
+        if os.path.isdir(Ruta+i):
+            lista_dir.append(i)
+        elif os.path.isfile(Ruta+i):
+            lista_archivos.append(i)
+    return render_template("index.html", listadir=lista_dir, listaarch=lista_archivos)
+   
+
+
+#muestra la carpeta home automaticamente al inicar
+#@app.route('/Home')
+#def mostrar_home():
+#    lista_archivos = mostrar_contenido_carpeta("~")
+#    return render_template("index.html", lista=lista_archivos)
+#    return crear_carpeta("peo", "~")
+
+#Muestra el contenido de la carpeta
+#def mostrar_contenido_carpeta(carpeta):
+#    home = os.path.expanduser(carpeta)
+#    lista_directorios = os.listdir(home)
+#    return lista_directorios
 
 #Crear una nueva carpeta
 '''def crear_carpeta(nombre, direccion_padre):
@@ -33,11 +109,14 @@ def mostrar_contenido_carpeta(carpeta):
             mensaje =  "Carpeta {} creada correctamente.".format(nombre)
     return mensaje'''
 
+#Crea carpeta llamando a la funcion
 @app.route("/crear_carpeta", methods=["POST", "GET"])
 def crear_dir():
+    global Ruta
     if request.method == "POST":
         nombre = request.form["Nombre_carpeta"]
-        direccion_padre = request.form["Direccion_Padre_Carpeta"]
+        direccion_padre = Ruta
+
     return funciones.crear_carpeta(nombre, direccion_padre)
 
 #Crear un nuevo archivo
@@ -56,14 +135,16 @@ def crear_dir():
 #Creación de archivo llamando a la función   
 @app.route("/crear_archivo", methods=["POST", "GET"])
 def crear_file():
+    global Ruta
     if request.method == "POST":
         nombre = request.form["Nombre_archivo"]
-        direccion_padre = request.form["Direccion_Padre_Archivo"]
+        direccion_padre = Ruta
     return funciones.crear_archivo(nombre, direccion_padre)
 
 #------- DE AQUÍ PARA ABAJO NO HE TOCADO NARA DE NARA --------------------------------
 
-#Renombrar un archivo y carpeta
+#Renombrar un archivo o carpeta
+@app.route("/renombrar")
 def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
     mensaje = ""
     direccion = os.path.join(direccion_padre, nombre_nuevo)
