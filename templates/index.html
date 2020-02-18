@@ -18,18 +18,22 @@
 	<h1 style="text-align: center;">PONY EXPLORER</h1>
 	<div id="container1" class="container">
 		{% for item in listadir %}
+			<item>
 				<link rel="stylesheet" href="{{ url_for('static', filename='css/containers.css') }}">
 				<a href="/Mostrar_Carpeta?carpeta={{item}}"><img src="https://img.icons8.com/clouds/100/000000/folder-invoices.png" alt="CARPETA"/></a>
-				<a href="/Mostrar_Carpeta?carpeta={{item}}" style="text-decoration:none; color: black"><p>{{item}}</p></a>		
+				<a href="/Mostrar_Carpeta?carpeta={{item}}" style="text-decoration:none; color: black; text-align: center;"><p>{{item}}</p></a>		
 				<!--https://img.icons8.com/clouds/100/000000/file.png-->
 				<!-- <img src="https://img.icons8.com/clouds/100/000000/folder-invoices.png"> -->
 				<!--<a href="/Mostrar_Carpeta?carpeta={{item}}"><img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e15a968b-bd17-4659-bc36-1d42ce2d6e01/d4y9qyl-f8bb0844-61b6-437a-80b3-1d251f68f6b2.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2UxNWE5NjhiLWJkMTctNDY1OS1iYzM2LTFkNDJjZTJkNmUwMVwvZDR5OXF5bC1mOGJiMDg0NC02MWI2LTQzN2EtODBiMy0xZDI1MWY2OGY2YjIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.2yXUvulRxlIkwFpodVwtZcR8Q-lxe_0HVfXngee4D0o"></a>-->
-		{% endfor %}
+			</item>
+				{% endfor %}
 		
 		{% for item in listaarch %}
+			<item>
 				<link rel="stylesheet" href="{{ url_for('static', filename='css/containers.css') }}">
 				<a href="/Mostrar_Carpeta?carpeta={{item}}"><img src="https://img.icons8.com/nolan/256/file.png" alt="ARCHIVO"/></a>
-				<p>{{item}}</p>	
+				<p style="text-align: center;">{{item}}</p>	
+			</item>
 		{% endfor %}
 	</div>	
 
@@ -67,17 +71,23 @@
 
 	<div id="ventana-emergente-renombrar-carpeta" class="fondo">
 		<div class="popup">
-			<!--<div class="btn-cerrar">+</div>-->
 			<img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e15a968b-bd17-4659-bc36-1d42ce2d6e01/d4y9qyl-f8bb0844-61b6-437a-80b3-1d251f68f6b2.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2UxNWE5NjhiLWJkMTctNDY1OS1iYzM2LTFkNDJjZTJkNmUwMVwvZDR5OXF5bC1mOGJiMDg0NC02MWI2LTQzN2EtODBiMy0xZDI1MWY2OGY2YjIucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.2yXUvulRxlIkwFpodVwtZcR8Q-lxe_0HVfXngee4D0o">
-			<form action="/crear_archivo" method="POST">
-				<div class="inputs">
-					<!--<input type="text" name="Direccion_Padre_Archivo" placeholder="Dirección Padre">-->
-					<input type="text" name="Nombre_archivo" placeholder="Nombre">
-					<p><input type="reset" value="Reset"></p>
-				</div>
+			<form action="/renombrar" method="POST">
+			
+				<select name="nombre_viejo">
+					{% for i in listadir %}
+					<option value={{item}}>{{item}}</option>
+					{% endfor %}
+					{% for i in listaarch %}
+					<option value={{item}}>{{item}}</option>
+					{% endfor %}
+				</select>
+
+				<input type="text" name="nombre_nuevo" placeholder="Nuevo nombre">
+			
 				<input type="submit" style="margin: 5px;" class="btn-submit" value="Guardar">
 			</form>
-			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-archivo').style.display='none'">Cerrar</button>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-renombrar-carpeta').style.display='none'">Cerrar</button>
 		</div>
 	</div>
 </body>

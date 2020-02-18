@@ -141,20 +141,22 @@ def crear_file():
         direccion_padre = Ruta
     return funciones.crear_archivo(nombre, direccion_padre)
 
-#------- DE AQUÍ PARA ABAJO NO HE TOCADO NARA DE NARA --------------------------------
+
 
 #Renombrar un archivo o carpeta
 @app.route("/renombrar")
-def renombrar(nombre_viejo, nombre_nuevo, direccion_padre):
-    mensaje = ""
+def renombrar():
+    global Ruta
+    direccion_padre = Ruta
+    nombre_viejo = request.form["nombre_viejo"]
+    nombre_nuevo = request.form["nombre_nuevo"]
     direccion = os.path.join(direccion_padre, nombre_nuevo)
     if os.path.exists(direccion):
-        mensaje = "Ya hay otro archivo en la carpeta con ese nombre."
+        return "Ese no vale. Algo ya se llama así."
     else:
-        os.rename(nombre_viejo, nombre_nuevo)
+        os.rename(Ruta+nombre_viejo, Ruta+nombre_nuevo)
         if os.path.exists(direccion):
-            mensaje = "Archivo renombrado exitosamente"
-    return mensaje
+            return actualizar_pagina()
     
 #Mover una carpeta
 def mover_carpeta(ruta_origen, ruta_destino, nombre):
