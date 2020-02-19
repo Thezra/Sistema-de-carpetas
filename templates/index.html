@@ -12,7 +12,9 @@
 	  <li><a href="/atras">Atrás</a><li>
 	  <li><a onclick="document.getElementById('ventana-emergente-carpeta').style.display='flex'">Crear carpeta</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-archivo').style.display='flex'">Crear archivo</a></li>
-	  <li><a onclick="document.getElementById('ventana-emergente-renombrar-carpeta').style.display='flex'">Renombrar carpeta</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-renombrar').style.display='flex'">Renombrar archivo o carpeta</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-eliminar-archivo').style.display='flex'">Eliminar un archivo</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-eliminar-carpeta').style.display='flex'">Eliminar una carpeta</a></li>
 	  <!--<li><a href="#about">Pegar</a></li>-->	
 	</ul>
 
@@ -53,7 +55,7 @@
 	<div id="ventana-emergente-archivo" class="fondo">
 		<div class="popup">
 			<!--<div class="btn-cerrar">+</div>-->
-			<img class="img-archivo" src="https://i.ibb.co/vDnw6dF/MLP-File.png">
+			<img src="https://i.ibb.co/QXwb3Hg/MLP-File.png">
 			<form action="/crear_archivo" method="POST">
 				<div class="inputs">
 					<!--<input type="text" name="Direccion_Padre_Archivo" placeholder="Dirección Padre">-->
@@ -66,26 +68,68 @@
 		</div>
 	</div>
 
-	<div id="ventana-emergente-renombrar-carpeta" class="fondo">
+	<div id="ventana-emergente-renombrar" class="fondo">
 		<div class="popup">
-			<img class="img-carpeta" src="https://i.ibb.co/CKJpTsX/MLP-Folder.png">
+			<!--Necesito una imagen para las cosas que no sé si son archivos o carpetas-->
+			<img src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
 			<form action="/renombrar" method="POST">
-			
+				<p>Seleccione el elemento a renombrar:</p> 
 				<select name="nombre_viejo">
-					{% for i in listadir %}
-					<option value={{item}}>{{item}}</option>
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
 					{% endfor %}
-					{% for i in listaarch %}
-					<option value={{item}}>{{item}}</option>
+					
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
 					{% endfor %}
 				</select>
 
+				<p>Ingrese el nuevo nombre:</p> 
 				<input type="text" name="nombre_nuevo" placeholder="Nuevo nombre">
-			
-				<input type="submit" style="margin: 5px;" class="btn-submit" value="Guardar">
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Renombrar">
+				<br/>
+				
 			</form>
-			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-renombrar-carpeta').style.display='none'">Cerrar</button>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-renombrar').style.display='none'">Cerrar</button>
 		</div>
 	</div>
+
+	<div id="ventana-emergente-eliminar-archivo" class="fondo">
+		<div class="popup">
+			
+			<form action="/eliminar_archivo" method="POST">
+				<p>Seleccione el archivo a eliminar:</p> 
+				<select name="nombre_archivo">
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Eliminar">
+				<br/>
+				
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-eliminar-archivo').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+	
+	<div id="ventana-emergente-eliminar-carpeta" class="fondo">
+		<div class="popup">
+			<form action="/eliminar_carpeta" method="POST">
+				<p>Seleccione la carpeta a eliminar:</p> 
+				<select name="nombre_archivo">
+					{% for item in listadir %}
+					<!--NO PASA BIEN LOS DATOS SI ES UN TEXTO QUE TIENE ESPACIOS-->
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Eliminar">
+				<br/>
+				
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-eliminar-carpeta').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+	
+
 </body>
 </html>
