@@ -12,5 +12,5 @@ def crear_archivo(nombre, direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
     permisos = 0o740
     mensaje = "Archivo creado exitosamente donde se le dió la gana"
-    os.open(nombre, permisos)
+    os.open(direccion, permisos)
     return render_template("success.html", mensaje=mensaje)
