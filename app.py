@@ -55,9 +55,11 @@ def mostrar_home():
     lista_directorios = os.listdir(contenido)
     for i in lista_directorios:
         if os.path.isdir(Ruta+i):
-            lista_dir.append(i)
+            if i[0]!=".":
+                lista_dir.append(i)
         elif os.path.isfile(Ruta+i):
-            lista_archivos.append(i)
+            if i[0]!=".":
+                lista_archivos.append(i)
     return render_template("index.html", listadir=lista_dir, listaarch=lista_archivos)
 
     #return str(lista_archivos)
@@ -77,9 +79,11 @@ def mostrar_contenido_carpeta(back=""):
     lista_directorios = os.listdir(ruta)
     for i in lista_directorios:
         if os.path.isdir(Ruta+i):
-            lista_dir.append(i)
+            if i[0]!=".":
+                lista_dir.append(i)
         elif os.path.isfile(Ruta+i):
-            lista_archivos.append(i)
+            if i[0]!=".":
+                lista_archivos.append(i)
     return render_template("index.html", listadir=lista_dir, listaarch=lista_archivos)
    
 
@@ -141,23 +145,16 @@ def crear_file():
         direccion_padre = Ruta
     return funciones.crear_archivo(nombre, direccion_padre)
 
-
-
 #Renombrar un archivo o carpeta
-@app.route("/renombrar")
+@app.route("/renombrar",  methods=["POST"])
 def renombrar():
     global Ruta
-    direccion_padre = Ruta
     nombre_viejo = request.form["nombre_viejo"]
     nombre_nuevo = request.form["nombre_nuevo"]
-    direccion = os.path.join(direccion_padre, nombre_nuevo)
-    if os.path.exists(direccion):
-        return "Ese no vale. Algo ya se llama así."
-    else:
-        os.rename(Ruta+nombre_viejo, Ruta+nombre_nuevo)
-        if os.path.exists(direccion):
-            return actualizar_pagina()
-    
+    os.rename(Ruta+nombre_viejo, Ruta+nombre_nuevo)
+    if os.path.exists(Ruta+nombre_nuevo):
+        return actualizar_pagina()
+
 #Mover una carpeta
 def mover_carpeta(ruta_origen, ruta_destino, nombre):
     mensaje = ""
@@ -200,14 +197,29 @@ def copiar_archivo(ruta_origen, ruta_destino, nombre):
     return "Archivo copiado"
 
 #Eliminar archivo
-def eliminarArchivo(nombre):
-    os.remove(nombre)
-    return "El archivo ha sido eliminado"
+@app.route("/eliminar_archivo", methods=["POST"])
+def eliminarArchivo():
+    global Ruta
+    nombre = request.form["nombre_archivo"]
+    direccion = Ruta+nombre
+    os.remove(direccion)
+    return actualizar_pagina()
 
 #Eliminar carpeta y TODO el contenido
-def eliminarCarpeta(nombre):
-    shutil.rmtree(nombre)
-    return "La carpeta y todo su contenido han sido eliminados"
+@app.route("/eliminar_carpeta", methods=["POST"])
+def eliminarCarpeta():
+    global Ruta
+    nombre = request.form["nombre_archivo"]
+
+    if str(nombre).find(" ") == -1:
+        #shutil.rmtree(Ruta+nombre)
+        #return actualizar_pagina()
+        return nombre
+    else:
+        nombre1 = str(nombre).replace(" ","\ ")
+        #shutil.rmtree(Ruta+nombre1)
+        #return actualizar_pagina()
+        return nombre1
 
 #Cambiar los permisos de un archivo o carpeta(sin afectar el contenido)
 def cambiar_permisos(ruta_padre, nombre, num_permisos):
