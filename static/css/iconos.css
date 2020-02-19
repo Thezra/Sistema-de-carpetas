@@ -1,7 +1,16 @@
-img{
-	width: 80px;
-  	height: 90px;
-  	cursor: pointer;
+.img-archivo{
+	width: 60px;
+  height: 70px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.img-carpeta{
+  width: 50px;
+  height: 70px;
+  cursor: pointer;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
 th, td{
@@ -42,4 +51,10 @@ li a {
 
 li a:hover {
   background-color: rgba(74,12,28,1);
+}
+
+.letreritos{
+	font-family: Arial, Helvetica, sans-serif;
+	text-align: center;
+	color: black;
 }

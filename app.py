@@ -1,15 +1,17 @@
 from flask import Flask, redirect, render_template, request
 import os, shutil, stat, subprocess, funciones
 
+#NOTA IMPORTANTE: En la línea 8, 14 y 54 cambiar /home/thera por /home/(su nombre de usuario)
+
 app = Flask(__name__)
 #app.secret_key = "peo"
-Ruta = "/home/daniel/"
+Ruta = "/home/thera/"
 
 #Para "subir" a la pagina anterior
 @app.route('/atras')
 def quitar_a_ruta():
     global Ruta
-    if Ruta == "/home/daniel/":
+    if Ruta == "/home/thera/":
         return mostrar_contenido_carpeta(Ruta)
     else:
         ruta = Ruta.split("/")
@@ -49,7 +51,7 @@ def inicio():
 def mostrar_home():
     contenido = os.path.expanduser('~')
     global Ruta
-    Ruta = "/home/daniel/"
+    Ruta = "/home/thera/"
     lista_dir = []
     lista_archivos = []
     lista_directorios = os.listdir(contenido)
