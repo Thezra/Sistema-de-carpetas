@@ -1,8 +1,7 @@
 from flask import Flask, redirect, render_template, request
 import os, shutil, stat, subprocess, funciones
 
-#NOTA IMPORTANTE: Cambiar /home/daniel por /home/(su nombre de usuario)
-#NOTA IMPORTANTE: Cambiar la sudo password por su contraseña
+#NOTA IMPORTANTE: Cambiar en las 3 líneas que aparece /home/thera por /home/(su nombre de usuario)
 
 app = Flask(__name__)
 #app.secret_key = "peo"
@@ -34,7 +33,7 @@ def actualizar_pagina():
     return mostrar_contenido_carpeta(Ruta)
 
 #Para "bajar" en la ruta
-def agregar_a_ruta(nombre_carpeta):
+def agregar_a_ruta(nombre_carpeta ):
     global Ruta
     Ruta = Ruta+str(nombre_carpeta)+"/"
     return Ruta
@@ -323,9 +322,10 @@ def cambiar_permisos():
     return render_template("exito.html", mensaje=mensaje)
 
 #Cambiar los permisos de una carpeta afectando el contenido
-@app.route("/cambiar_permisos_recursivo", methods=["POST"])
+'''@app.route("/cambiar_permisos_recursivo", methods=["POST"])
 def cambiar_permisos_recursivo():
     global Ruta
+    sudo_password = request.form["sudo_password"]
     nombre = request.form["nombre"]
     usuario_l = int(request.form["user_r"])
     usuario_es = int(request.form["user_w"])
@@ -339,12 +339,12 @@ def cambiar_permisos_recursivo():
     mensaje_exito = "Permisos de la carpeta y todo su contenido actualizados exitosamente"
     mensaje_error = "No se han podido cambiar los permisos"
     num_permisos = str(usuario_l+usuario_es+usuario_ej)+str(grupo_l+grupo_es+grupo_ej)+str(otros_l+otros_es+otros_ej)
-    comando = 'chmod -R '+str(num_permisos)+' '+str(nombre)
+    comando = 'sudo chmod -R '+str(num_permisos)+' '+str(nombre)
     try:
-        os.system(comando)
+        os.system('echo %s|sudo -S %s' % (sudo_password, comando))
         return render_template("exito.html", mensaje=mensaje_exito)
     except OSError:
-        return render_template("error.html", mensaje=mensaje_error)
+        return render_template("error.html", mensaje=mensaje_error)'''
 
 
 #Cambiar el usuario dueño de solo ese archivo
@@ -400,7 +400,6 @@ def mostrar_perms():
     global Ruta
     nombre = request.form["nombre"]
     return funciones.mostrar_permisos(nombre, Ruta)
-    
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000, debug=True)

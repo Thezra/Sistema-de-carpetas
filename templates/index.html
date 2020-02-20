@@ -20,8 +20,8 @@
 	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-owner').style.display='flex'">Cambiar dueño</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-owner-recursivo').style.display='flex'">Cambiar dueño recursivamente</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-permimsos').style.display='flex'">Mostrar permisos</a></li>
-	  <li><a onclick="document.getElementById('ventana-emergente-copiar-carpeta').style.display='flex'">Copiar una carpeta</a></li>
-	  <!--<li><a href="copiar.html".style.display='flex'>Copiar una carpeta</a></li>-->
+	  <li><a onclick="document.getElementById('ventana-emergente-copiar').style.display='flex'">Copiar</a></li>
+	  
 	  <!--<li><a onclick="document.getElementById('ventana-emergente-cambiar-permisos-recursivo').style.display='flex'">Cambiar permisos recursivamente</a></li>-->
 	  <!--<li><a href="#about">Pegar</a></li>-->	
 	</ul>
@@ -48,6 +48,7 @@
 		<div class="popup">	
 			<img class="img-carpeta" src="https://i.ibb.co/CKJpTsX/MLP-Folder.png">
 			<form action="/crear_carpeta" method="POST">
+				<p class="letreritos" >Escriba el nombre de la carpeta</p> 
 				<div class="inputs">
 					<!--<input type="text" name="Direccion_Padre_Carpeta" placeholder="Dirección Padre">-->
 					<!--<p>Ingrese el nombre que le dará a la carpeta:</p>-->
@@ -65,6 +66,7 @@
 			<!--<div class="btn-cerrar">+</div>-->
 			<img class="img-archivo" src="https://i.ibb.co/QXwb3Hg/MLP-File.png">
 			<form action="/crear_archivo" method="POST">
+			<p class="letreritos" >Escriba el nombre de la carpeta</p> 
 				<div class="inputs">
 					<!--<input type="text" name="Direccion_Padre_Archivo" placeholder="Dirección Padre">-->
 					<input type="text" name="Nombre_archivo" placeholder="Nombre">
@@ -81,7 +83,7 @@
 			<!--Necesito una imagen para las cosas que no sé si son archivos o carpetas-->
 			<img class="img-archivo" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
 			<form action="/renombrar" method="POST">
-				<p>Seleccione el elemento a renombrar:</p> 
+				<p>Seleccione el elemento a renombrar</p> 
 				<select name="nombre_viejo">
 					{% for item in listadir %}
 					<option value={{item}}> {{item}} </option>
@@ -298,9 +300,10 @@
 
 	<!--<div id="ventana-emergente-cambiar-permisos-recursivo" class="fondo">
 		<div class="popup">
-			<img class="img-archivo" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
 			<form action="/cambiar_permisos_recursivo" method="POST">
-				<p class="letreritos">Seleccione los persmisos y el elemento al cual desea cambiarle los permisos</p> 
+				<p style="font-size: 12px;">Ingrese la contaseña del SUPER USUARIO</p> 
+				<input type="password" name="sudo_password" placeholder="Contraseña">
+				<p class="letreritos" style="font-size: 12px;">Seleccione los persmisos y el elemento al cual desea cambiarle los permisos</p> 
 				<select style="margin-left: 60%;" name="nombre">
 					{% for item in listadir %}
 					<option value={{item}}> {{item}} </option>
@@ -352,7 +355,7 @@
 			</form>
 			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-cambiar-permisos-recursivo').style.display='none'">Cerrar</button>
 		</div>
-	</div> -->
+	</div>-->
 	
 
 </body>

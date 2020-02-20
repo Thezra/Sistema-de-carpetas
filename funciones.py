@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request
-import os, shutil, stat, subprocess
+import os, shutil, stat, subprocess, getpass 
+from pathlib import Path
 
 def crear_carpeta(nombre, direccion_padre):
     direccion = os.path.join(direccion_padre, nombre)
@@ -25,11 +26,32 @@ def crear_archivo(nombre, direccion_padre):
 
 def mostrar_permisos(nombre, Ruta):
 	mensaje_error = "Ha habido un error al buscar la ruta"
+	names = subprocess.getoutput(["ls "+Ruta+nombre])
+	resultado=subprocess.getoutput(["ls -l "+Ruta+nombre])
+	palabras = names.split()
+	for i in palabras:
+		final= resultado.split()
+
+	final_real=[]
+	final_2 = final[2:]
+	try:
+		#resultado=subprocess.getoutput(["ls -l "+Ruta+nombre])
+		return render_template("ventana.html", final_real=resultado)
+	except OSError:
+		return render_template("error.html", mensaje=mensaje_error)
+
+	def guardar(rutax):
+		return (rutax)
+
+
+'''def mostrar_permisos(nombre, Ruta):
+	mensaje_error = "Ha habido un error al buscar la ruta"
 	try:
 		resultado=subprocess.getoutput(["ls -l "+Ruta+nombre])
 		return render_template("ventana.html", mensaje=resultado)
 	except OSError:
-		return render_template("error.html", mensaje=mensaje_error)
+		return render_template("error.html", mensaje=mensaje_error)'''
+
     #comando = "ls -l | grep "+str(nombre)
     #salida = os.system(comando)
     #return str(resultado)
