@@ -40,4 +40,3 @@ def mostrar_permisos(nombre, Ruta):
 		return render_template("ventana.html", mensaje=resultado)
 	except OSError:
 		return render_template("error.html", mensaje=mensaje_error)'''
-    

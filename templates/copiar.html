@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Sistema de archivos y carpetas</title>
+
+<head>
+	<title>Sistema de archivos y carpetas</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iconos.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/containers.css') }}">
+</head>
+<body>
+    <div id="container1" class="container"></div>
+        <ul> 
+            <li><a href="/Home" style="position: right;">Cancelar</a></li>  
+            <li><a href="/atras">Atrás</a><li>
+            <li><a href="/copiar_carpeta".style.display='flex'>Pegar</a></li>
+        </ul>
+
+        <h1 class="letreritos" style="color: rgb(152,11,58);">PONY EXPLORER</h1>
+        <h3 class="letreritos" style="color: black;">Por favor seleccione la carpeta a donde quiere pegar el archivo</h3>
+        <div id="container1" class="container">
+            {% for item in listadir %}
+                <item style="text-align: center;" >
+                    <a href="/Mostrar_Carpeta1?carpeta={{item}}" ><img class="img-carpeta" src="https://i.ibb.co/CKJpTsX/MLP-Folder.png" alt="CARPETA"/></a>
+                    <a href="/Mostrar_Carpeta1?carpeta={{item}}" class="letreritos" ><p>{{item}}</p></a>		
+                    <!--https://img.icons8.com/clouds/100/000000/file.png-->
+                </item>
+            {% endfor %}
+        </div>	
+        
+    </div>
+</body>
