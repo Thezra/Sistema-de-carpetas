@@ -1,7 +1,8 @@
 from flask import Flask, redirect, render_template, request
 import os, shutil, stat, subprocess, funciones
 
-#NOTA IMPORTANTE: En la línea 8, 14 y 54 cambiar /home/thera por /home/(su nombre de usuario)
+#NOTA IMPORTANTE: Cambiar /home/thera por /home/(su nombre de usuario)
+#NOTA IMPORTANTE: Cambiar la sudo password por su contraseña
 
 app = Flask(__name__)
 #app.secret_key = "peo"
@@ -148,14 +149,26 @@ def crear_file():
     return funciones.crear_archivo(nombre, direccion_padre)
 
 #Renombrar un archivo o carpeta
-@app.route("/renombrar",  methods=["POST"])
+'''@app.route("/renombrar",  methods=["POST"])
 def renombrar():
     global Ruta
     nombre_viejo = request.form["nombre_viejo"]
     nombre_nuevo = request.form["nombre_nuevo"]
     os.rename(Ruta+nombre_viejo, Ruta+nombre_nuevo)
     if os.path.exists(Ruta+nombre_nuevo):
+        return actualizar_pagina()'''
+
+@app.route("/renombrar",  methods=["POST"])
+def renombrar():
+    global Ruta
+    nombre_viejo = request.form["nombre_viejo"]
+    nombre_nuevo = request.form["nombre_nuevo"]
+    mensaje_error = "No se ha podido renombrar"
+    try:
+        os.rename(Ruta+nombre_viejo, Ruta+nombre_nuevo)
         return actualizar_pagina()
+    except OSError:
+        return render_template("error.html", mensaje=mensaje_error)
 
 #Mover una carpeta
 def mover_carpeta(ruta_origen, ruta_destino, nombre):
@@ -212,52 +225,107 @@ def eliminarArchivo():
 def eliminarCarpeta():
     global Ruta
     nombre = request.form["nombre_archivo"]
+    mensaje_error = "No se ha podido eliminar la carpeta"
+    try:
+        shutil.rmtree(Ruta+nombre)
+        return actualizar_pagina()
+    except OSError:
+        return render_template("error.html", mensaje=mensaje_error)
 
-    if str(nombre).find(" ") == -1:
-        #shutil.rmtree(Ruta+nombre)
-        #return actualizar_pagina()
-        return nombre
-    else:
-        nombre1 = str(nombre).replace(" ","\ ")
-        #shutil.rmtree(Ruta+nombre1)
-        #return actualizar_pagina()
-        return nombre1
 
 #Cambiar los permisos de un archivo o carpeta(sin afectar el contenido)
-def cambiar_permisos(ruta_padre, nombre, num_permisos):
+'''def cambiar_permisos(ruta_padre, nombre, num_permisos):
     ruta = os.path.join(ruta_padre,nombre)
     decimal = int(str(num_permisos), 8)
     os.chmod(ruta, decimal)
-    return "Los permisos han sido cambiados correctamente"
+    return "Los permisos han sido cambiados correctamente"'''
     #NOTITA IMPORTANTE: Diferenciar entre permisos en recursividad o solo al archivo o carpeta actual <3 --- Listo
 
+@app.route("/cambiar_permisos", methods=["POST"])
+def cambiar_permisos():
+    global Ruta
+    nombre = request.form["nombre"]
+
+    usuario_l = int(request.form["user_r"])
+    usuario_es = int(request.form["user_w"])
+    usuario_ej = int(request.form["user_x"])
+
+    grupo_l = int(request.form["grupo_r"])
+    grupo_es = int(request.form["grupo_w"])
+    grupo_ej = int(request.form["grupo_x"])
+
+    otros_l = int(request.form["otros_r"])
+    otros_es = int(request.form["otros_w"])
+    otros_ej = int(request.form["otros_x"])
+
+    num_permisos = str(usuario_l+usuario_es+usuario_ej)+str(grupo_l+grupo_es+grupo_ej)+str(otros_l+otros_es+otros_ej)
+
+    decimal = int(num_permisos, 8)
+    os.chmod(Ruta+nombre, decimal)
+    mensaje = "Los permisos han sido cambiados correctamente"
+    return render_template("exito.html", mensaje=mensaje)
+
 #Cambiar los permisos de una carpeta afectando el contenido
-def cambiar_permisos_recursivo(nombre, num_permisos):
-    comando = 'chmod -R '+str(num_permisos)+' '+nombre
-    os.system(comando)
-    mensaje = "Permisos de la carpeta actualizados exitosamente"
-    return mensaje
+@app.route("/cambiar_permisos_recursivo", methods=["POST"])
+def cambiar_permisos_recursivo():
+    global Ruta
+    nombre = request.form["nombre"]
+    usuario_l = int(request.form["user_r"])
+    usuario_es = int(request.form["user_w"])
+    usuario_ej = int(request.form["user_x"])
+    grupo_l = int(request.form["grupo_r"])
+    grupo_es = int(request.form["grupo_w"])
+    grupo_ej = int(request.form["grupo_x"])
+    otros_l = int(request.form["otros_r"])
+    otros_es = int(request.form["otros_w"])
+    otros_ej = int(request.form["otros_x"])
+    mensaje_exito = "Permisos de la carpeta y todo su contenido actualizados exitosamente"
+    mensaje_error = "No se han podido cambiar los permisos"
+    num_permisos = str(usuario_l+usuario_es+usuario_ej)+str(grupo_l+grupo_es+grupo_ej)+str(otros_l+otros_es+otros_ej)
+    comando = 'chmod -R '+str(num_permisos)+' '+str(nombre)
+    try:
+        os.system(comando)
+        return render_template("exito.html", mensaje=mensaje_exito)
+    except OSError:
+        return render_template("error.html", mensaje=mensaje_error)
+
 
 #Cambiar el usuario dueño de solo ese archivo
-def cambiar_dueño(nuevo_dueño, nombre):
-    comando = 'sudo chown '+nuevo_dueño+' '+nombre
-    sudo_password = "danalejo+02"
-    os.system('echo %s|sudo -S %s' % (sudo_password, comando))
-    mensaje = "Usuario dueño del archivo actualizado correctamente"
-    return mensaje
-    #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
+@app.route("/cambiar_owner", methods=["POST"])
+def cambiar_owner():
+    global Ruta
+    sudo_password = request.form["sudo_password"]
+    nuevo_owner = request.form["nuevo_owner"]
+    nombre = request.form["nombre"]
+    comando = 'sudo chown '+str(nuevo_owner)+' '+str(Ruta+nombre)
+    mensaje_exito = "Usuario dueño del archivo actualizado correctamente"
+    mensaje_error = "No se ha podido cambiar el dueño"
+    try:
+        os.system('echo %s|sudo -S %s' % (sudo_password, comando))
+        return render_template("exito.html", mensaje=mensaje_exito)
+    except OSError:
+        return render_template("error.html", mensaje=mensaje_error)
 
 #Cambiar el usario dueño de una carpeta y su contenido
-def cambiar_dueño_recursivo(nuevo_dueño, nombre_carpeta):
-    sudo_password = "danalejo+02"
-    comando = 'chown -R '+nuevo_dueño+' '+nombre_carpeta
-    os.system('echo %s|sudo -S %s' % (sudo_password, comando))
-    mensaje = "Usuario dueño de la carpeta actualizado correctamente"
-    return mensaje
+@app.route("/cambiar_owner_recursivo", methods=["POST"])
+def cambiar_owner_recursivo():
+    global Ruta
+    sudo_password = request.form["sudo_password"]
+    nuevo_owner = request.form["nuevo_owner"]
+    nombre = request.form["nombre"]
+    comando = 'sudo chown -R '+nuevo_owner+' '+str(nombre+Ruta)
+    mensaje_exito = "Usuario dueño del objeto y de todos sus hijos ha sido cambiado correctamente"
+    mensaje_error = "No se ha podido cambiar el dueño"
+    try:
+        #os.system('echo %s|sudo -S %s' % (sudo_password, comando))
+        os.system(comando)
+        return render_template("exito.html", mensaje=mensaje_exito)
+    except OSError:
+        return render_template("error.html", mensaje=mensaje_error)
     #NOTITA IMPORTANTE: Poner en "sudo_password" tu contraseña de ubuntu
 
 #Mostrar permisos de todos los archivos de una carpeta
-def mostrar_permisos_global():
+'''def mostrar_permisos_global():
     #comando = "ls -l"
     #salida = os.system(comando)
     resultado = subprocess.getoutput("ls")
@@ -267,18 +335,14 @@ def mostrar_permisos_global():
     for i in lista_nombres:
         permisos = mostrar_permisos_especifico(i)
         string_para_return = string_para_return+" "+permisos+"\n"
-    return string_para_return
+    return string_para_return '''
 
 #Mostrar permisos de un archivo en especifico
-def mostrar_permisos_especifico(nombre):
-    if str(nombre).find(" ") == -1:
-        resultado=subprocess.getoutput("ls -l "+nombre)
-    else:
-        str(nombre).replace(" ","\ ")
-        resultado=subprocess.getoutput("ls -l '"+nombre+"'")
-    #comando = "ls -l | grep "+str(nombre)
-    #salida = os.system(comando)
-    return str(resultado)
+@app.route("/mostrar_permisos", methods=["POST"])
+def mostrar_perms():
+    global Ruta
+    nombre = request.form["nombre"]
+    return funciones.mostrar_permisos(nombre, Ruta)
     
 
 if __name__ == "__main__":

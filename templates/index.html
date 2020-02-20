@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 	<title>Sistema de archivos y carpetas</title>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/iconos.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iconos.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/containers.css') }}">
 </head>
@@ -15,10 +16,16 @@
 	  <li><a onclick="document.getElementById('ventana-emergente-renombrar').style.display='flex'">Renombrar archivo o carpeta</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-eliminar-archivo').style.display='flex'">Eliminar un archivo</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-eliminar-carpeta').style.display='flex'">Eliminar una carpeta</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-permisos').style.display='flex'">Cambiar permisos</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-owner').style.display='flex'">Cambiar dueño</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-owner-recursivo').style.display='flex'">Cambiar dueño recursivamente</a></li>
+	  <li><a onclick="document.getElementById('ventana-emergente-permimsos').style.display='flex'">Mostrar permisos</a></li>
+	  
+	  <!--<li><a onclick="document.getElementById('ventana-emergente-cambiar-permisos-recursivo').style.display='flex'">Cambiar permisos recursivamente</a></li>-->
 	  <!--<li><a href="#about">Pegar</a></li>-->	
 	</ul>
 
-	<h1 class="letreritos" ;">PONY EXPLORER</h1>
+	<h1 class="letreritos" style="color: rgb(152,11,58);">PONY EXPLORER</h1>
 	<div id="container1" class="container">
 		{% for item in listadir %}
 			<item style="text-align: center;" >
@@ -96,7 +103,7 @@
 
 	<div id="ventana-emergente-eliminar-archivo" class="fondo">
 		<div class="popup">
-			
+			<img class="img-archivo" src="https://i.ibb.co/QXwb3Hg/MLP-File.png">
 			<form action="/eliminar_archivo" method="POST">
 				<p>Seleccione el archivo a eliminar:</p> 
 				<select name="nombre_archivo">
@@ -114,6 +121,7 @@
 	
 	<div id="ventana-emergente-eliminar-carpeta" class="fondo">
 		<div class="popup">
+			<img class="img-archivo" src="https://i.ibb.co/QXwb3Hg/MLP-Folder.png">
 			<form action="/eliminar_carpeta" method="POST">
 				<p>Seleccione la carpeta a eliminar:</p> 
 				<select name="nombre_archivo">
@@ -129,6 +137,199 @@
 			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-eliminar-carpeta').style.display='none'">Cerrar</button>
 		</div>
 	</div>
+
+	<div id="ventana-emergente-cambiar-permisos" class="fondo">
+		<div class="popup">
+			<form class="letreritos" action="/cambiar_permisos" method="POST">
+				<p>Seleccione los persmisos y el elemento al cual desea cambiarle los permisos</p> 
+				<select class="inputs" style="margin-left: 60%;" name="nombre">
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+					
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+				<input type="reset" value="Reset">
+		
+				<table style="font-size: 10px">
+					<tr>
+						<th><3</th>
+						<th>Lectura</th>
+						<th>Escritura</th>
+						<th>Ejecución</th>
+					</tr>
+					<tr>
+						<th>Usuario</th>
+						<th><input type="checkbox" name="user_r" value="4">
+							<input type="hidden" name="user_r" value="0"></th>
+						<th><input type="checkbox" name="user_w" value="2">
+							<input type="hidden" name="user_w" value="0"></th>
+						<th><input type="checkbox" name="user_x" value="1">
+							<input type="hidden" name="user_x" value="0"></th>
+					</tr>
+					<tr>
+						<th>Grupo</th>
+						<th><input type="checkbox" name="grupo_r" value="4">
+							<input type="hidden" name="grupo_r" value="0"></th>
+						<th><input type="checkbox" name="grupo_w" value="2">
+							<input type="hidden" name="grupo_w" value="0"></th>
+						<th><input type="checkbox" name="grupo_x" value="1">
+							<input type="hidden" name="grupo_x" value="0"></th>
+					</tr>
+					<tr>
+						<th>Otros</th>
+						<th><input type="checkbox" name="otros_r" value="4">
+							<input type="hidden" name="otros_r" value="0"></th>
+						<th><input type="checkbox" name="otros_w" value="2">
+							<input type="hidden" name="otros_w" value="0"></th>
+						<th><input type="checkbox" name="otros_x" value="1">
+							<input type="hidden" name="otros_x" value="0"></th>
+					</tr>
+					</table>
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Aceptar">
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-cambiar-permisos').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+
+	<div id="ventana-emergente-cambiar-owner" class="fondo">
+		<div class="popup">
+			<!--Necesito una imagen para las cosas que no sé si son archivos o carpetas-->
+			<img style="width: 50px;" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
+			<form class="inputs" action="/cambiar_owner" method="POST">
+				<p>Ingrese la contaseña del SUPER USUARIO</p> 
+				<input type="password" name="sudo_password" placeholder="Contraseña">
+
+				<p>Seleccione la carpeta o archivo</p> 
+				<select name="nombre">
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+					
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+
+				<p>Ingrese el nombre del nuevo dueño</p> 
+				<input type="text" name="nuevo_owner" placeholder="Nuevo dueño">
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Aceptar">
+				<br/>
+				
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-cambiar-owner').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+
+	<div id="ventana-emergente-cambiar-owner-recursivo" class="fondo">
+		<div class="popup">
+			<!--Necesito una imagen para las cosas que no sé si son archivos o carpetas-->
+			<img style="width: 50px;" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
+			<form class="inputs" action="/cambiar_owner" method="POST">
+				<p>Ingrese la contaseña del SUPER USUARIO</p> 
+				<input type="password" name="sudo_password" placeholder="Contraseña">
+
+				<p>Seleccione la carpeta o archivo</p> 
+				<select name="nombre">
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+					
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+
+				<p>Ingrese el nombre del nuevo dueño</p> 
+				<input type="text" name="nuevo_owner" placeholder="Nuevo dueño">
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Aceptar">
+				<br/>
+				
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-cambiar-owner-recursivo').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+
+	<div id="ventana-emergente-permimsos" class="fondo">
+		<div class="popup">
+			<!--Necesito una imagen para las cosas que no sé si son archivos o carpetas-->
+			<img class="img-archivo" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
+			<form action="/mostrar_permisos" method="POST">
+				<p>Seleccione el elemento para ver los permisos de su contenido</p> 
+				<select name="nombre">
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+					
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Aceptar">
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-permimsos').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+
+	<!--<div id="ventana-emergente-cambiar-permisos-recursivo" class="fondo">
+		<div class="popup">
+			<img class="img-archivo" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
+			<form action="/cambiar_permisos_recursivo" method="POST">
+				<p class="letreritos">Seleccione los persmisos y el elemento al cual desea cambiarle los permisos</p> 
+				<select style="margin-left: 60%;" name="nombre">
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+					
+					{% for item in listaarch %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+
+				<input type="reset" value="Reset">
+
+				<table class="input" style="font-size: 10px; margin-left: 15%;">
+					<tr>
+						<th><3</th>
+						<th>Lectura</th>
+						<th>Escritura</th>
+						<th>Ejecución</th>
+					</tr>
+					<tr>
+						<th>Usuario</th>
+						<th><input type="checkbox" name="user_r" value="4">
+							<input type="hidden" name="user_r" value="0"></th>
+						<th><input type="checkbox" name="user_w" value="2">
+							<input type="hidden" name="user_w" value="0"></th>
+						<th><input type="checkbox" name="user_x" value="1">
+							<input type="hidden" name="user_x" value="0"></th>
+					</tr>
+					<tr>
+						<th>Grupo</th>
+						<th><input type="checkbox" name="grupo_r" value="4">
+							<input type="hidden" name="grupo_r" value="0"></th>
+						<th><input type="checkbox" name="grupo_w" value="2">
+							<input type="hidden" name="grupo_w" value="0"></th>
+						<th><input type="checkbox" name="grupo_x" value="1">
+							<input type="hidden" name="grupo_x" value="0"></th>
+					</tr>
+					<tr>
+						<th>Otros</th>
+						<th><input type="checkbox" name="otros_r" value="4">
+							<input type="hidden" name="otros_r" value="0"></th>
+						<th><input type="checkbox" name="otros_w" value="2">
+							<input type="hidden" name="otros_w" value="0"></th>
+						<th><input type="checkbox" name="otros_x" value="1">
+							<input type="hidden" name="otros_x" value="0"></th>
+					</tr>
+					</table>
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Aceptar">
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-cambiar-permisos-recursivo').style.display='none'">Cerrar</button>
+		</div>
+	</div> -->
 	
 
 </body>

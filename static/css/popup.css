@@ -12,7 +12,7 @@
 
 .popup{
 	width: 480px;
-	height: 280px;
+	height: 100px;
 	background-color: white;
 	border-radius: 5px;
 	text-align: center;
@@ -65,4 +65,10 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.popup table{
+	margin-left:auto; 
+    margin-right:auto;
+    width:50%; 
 }

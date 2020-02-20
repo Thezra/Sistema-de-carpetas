@@ -3,12 +3,14 @@
 <head>
 	<title>Respuesta</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/popup.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/iconos.css') }}">
 </head>
 <body>
 
 	<div class="fondo_exito">
 		<div class="popup">
 			<div class="inputs">
+				<img style="width: 150px; margin-top: 10px" src="https://i.ibb.co/Prf7YQt/Succes.png" alt="Mano de aprobación">
 				<p style="font-family: Arial, Helvetica, sans-serif; align-items: center;" >{{mensaje}}</p>
 			</div>
 		<button style="margin: 5px;" class="btn-cerrar" onclick="window.location.href = 'actualizar'">Cerrar</button>
