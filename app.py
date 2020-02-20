@@ -1,18 +1,21 @@
 from flask import Flask, redirect, render_template, request
 import os, shutil, stat, subprocess, funciones
 
-#NOTA IMPORTANTE: Cambiar /home/thera por /home/(su nombre de usuario)
+#NOTA IMPORTANTE: Cambiar /home/daniel por /home/(su nombre de usuario)
 #NOTA IMPORTANTE: Cambiar la sudo password por su contraseña
 
 app = Flask(__name__)
 #app.secret_key = "peo"
-Ruta = "/home/thera/"
+Ruta = "/home/daniel/"
+NombreArchivo = ""
+RutaOrigen = ""
+    
 
 #Para "subir" a la pagina anterior
 @app.route('/atras')
 def quitar_a_ruta():
     global Ruta
-    if Ruta == "/home/thera/":
+    if Ruta == "/home/daniel/":
         return mostrar_contenido_carpeta(Ruta)
     else:
         ruta = Ruta.split("/")
@@ -52,7 +55,7 @@ def inicio():
 def mostrar_home():
     contenido = os.path.expanduser('~')
     global Ruta
-    Ruta = "/home/thera/"
+    Ruta = "/home/daniel/"
     lista_dir = []
     lista_archivos = []
     lista_directorios = os.listdir(contenido)
@@ -88,7 +91,25 @@ def mostrar_contenido_carpeta(back=""):
             if i[0]!=".":
                 lista_archivos.append(i)
     return render_template("index.html", listadir=lista_dir, listaarch=lista_archivos)
-   
+
+
+#Muestra el contenido de la carpeta (version paralela 1)
+@app.route('/Mostrar_Carpeta1', methods=['GET'])
+def mostrar_contenido_carpeta1(back=""):
+    lista_dir = []
+    if back == "":
+        carpeta = request.args.get('carpeta')
+        carpeta = str(carpeta).strip("'")
+        ruta = agregar_a_ruta(carpeta)
+    else:
+        ruta=back
+
+    lista_directorios = os.listdir(ruta)
+    for i in lista_directorios:
+        if os.path.isdir(Ruta+i):
+            if i[0]!=".":
+                lista_dir.append(i)
+    return render_template("copiar.html", listadir=lista_dir)
 
 
 #muestra la carpeta home automaticamente al inicar
@@ -184,18 +205,51 @@ def mover_carpeta(ruta_origen, ruta_destino, nombre):
         eliminarCarpeta(nombre)
     return mensaje
     
+#Boveda_copiado
+@app.route("/boveda", methods=['POST'])
+def boveda_temporal():
+    global NombreArchivo
+    global RutaOrigen
+    global Ruta
+    lista_dir=[]
+    NombreArchivo = request.form['nombre']
+    RutaOrigen = os.path.join(Ruta,NombreArchivo)
+    ruta = Ruta.split("/")
+    ruta.pop(-1)
+    ruta.pop(-1)
+    ruta_nueva =""
+    for i in ruta:
+        ruta_nueva = ruta_nueva+i+"/"
+    Ruta = ruta_nueva
+    lista_directorios = os.listdir(Ruta)
+    
+    for i in lista_directorios:
+        if os.path.isdir(Ruta+i):
+            if i[0]!=".":
+                lista_dir.append(i)
+    
+    return render_template("copiar.html", listadir = lista_dir)
+
 #Copiar una carpeta
-def copiar_carpeta(ruta_origen, ruta_destino, nombre):
-    mensaje = ""
-    origen = os.path.join(ruta_origen,nombre)
-    destino = os.path.join(ruta_destino, nombre)
-    if os.path.exists(destino):
-        mensaje="No puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
-    else:
-        shutil.copytree(origen, destino)
-        if os.path.exists(destino):
-            mensaje = "La carpeta se movió exitosamente"
-    return mensaje
+@app.route("/copiar_carpeta")
+def copiar_carpeta():
+    global Ruta
+    global NombreArchivo
+    global RutaOrigen
+
+
+    dest = os.path.join(Ruta, NombreArchivo)
+    #origen = os.path.join(RutaOrigen, NombreArchivo)
+    
+    shutil.copytree(RutaOrigen, dest)
+    return mostrar_home()
+    #if os.path.exists(destino):
+    #    mensaje = "No puede moverse la carpeta, ya hay una carpeta con ese nombre en el destino"
+    #else:
+    #    shutil.copytree(origen, destino)
+    #    if os.path.exists(destino):
+    #        mensaje = "La carpeta se movió exitosamente"
+    #return mensaje
 
 #Copiar un archivo 
 def copiar_archivo(ruta_origen, ruta_destino, nombre):
@@ -222,9 +276,12 @@ def eliminarArchivo():
 
 #Eliminar carpeta y TODO el contenido
 @app.route("/eliminar_carpeta", methods=["POST"])
-def eliminarCarpeta():
+def eliminarCarpeta(back=""):
     global Ruta
-    nombre = request.form["nombre_archivo"]
+    if back=="":
+        nombre = request.form["nombre_archivo"]
+    else:
+        nombre=back
     mensaje_error = "No se ha podido eliminar la carpeta"
     try:
         shutil.rmtree(Ruta+nombre)

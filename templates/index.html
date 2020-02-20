@@ -20,7 +20,8 @@
 	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-owner').style.display='flex'">Cambiar dueño</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-cambiar-owner-recursivo').style.display='flex'">Cambiar dueño recursivamente</a></li>
 	  <li><a onclick="document.getElementById('ventana-emergente-permimsos').style.display='flex'">Mostrar permisos</a></li>
-	  
+	  <li><a onclick="document.getElementById('ventana-emergente-copiar-carpeta').style.display='flex'">Copiar una carpeta</a></li>
+	  <!--<li><a href="copiar.html".style.display='flex'>Copiar una carpeta</a></li>-->
 	  <!--<li><a onclick="document.getElementById('ventana-emergente-cambiar-permisos-recursivo').style.display='flex'">Cambiar permisos recursivamente</a></li>-->
 	  <!--<li><a href="#about">Pegar</a></li>-->	
 	</ul>
@@ -272,6 +273,28 @@
 			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-permimsos').style.display='none'">Cerrar</button>
 		</div>
 	</div>
+
+	<div id="ventana-emergente-copiar-carpeta" class="fondo">
+		<div class="popup">
+			<!--Necesito una imagen para las cosas que no sé si son archivos o carpetas-->
+			<img style="width: 50px;" src="https://i.ibb.co/28khrrB/MLP-Ambos.png">
+			<form class="inputs" action="/boveda" method="POST">
+				<p>Seleccione la carpeta que quiere copiar</p> 
+				<select name="nombre">
+					{% for item in listadir %}
+					<option value={{item}}> {{item}} </option>
+					{% endfor %}
+				</select>
+				<input type="submit" style="margin: 5px;" class="btn-submit" value="Copiar">
+				<br/>
+			</form>
+			<button style="margin: 5px;" class="btn-cerrar" onclick="document.getElementById('ventana-emergente-copiar-carpeta').style.display='none'">Cerrar</button>
+		</div>
+	</div>
+
+
+
+
 
 	<!--<div id="ventana-emergente-cambiar-permisos-recursivo" class="fondo">
 		<div class="popup">
